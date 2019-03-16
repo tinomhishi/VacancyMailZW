@@ -35,7 +35,7 @@ class Command(BaseCommand):
 		period = timezone.now() - timedelta(days=7)
 		post_queue = FacebookPost.objects.filter(created__gte= period,
 										published=False).order_by('created')[0:settings.FB_BATCH_SIZE]
-		graph = facebook.GraphAPI(settings.PAGE_TOKEN, version=3.2)
+		graph = facebook.GraphAPI(settings.PGE_TOKEN, version=3.2)
 
 		for post in post_queue:
 			post.compose()
@@ -43,7 +43,7 @@ class Command(BaseCommand):
 			self.stdout.write('Length =>' + str(len(post.post)))
 
 			try:
-				graph.put_object(settings.FB_PGE_ID, 'feed', message=post.post)
+				graph.put_object(settings.PGE_ID, 'feed', message=post.post)
 				post.published = True
 				post.save()
 			except:
